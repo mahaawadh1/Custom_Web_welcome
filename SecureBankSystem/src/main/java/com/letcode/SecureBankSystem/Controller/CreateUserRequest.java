@@ -1,10 +1,16 @@
 package com.letcode.SecureBankSystem.Controller;
 
-public class ContactRequest {
 
-    private String name ;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class CreateUserRequest {
+
+    private String name;
     private String email;
-    private String phone ;
+    private String phone;
+    private String status;
+
 
     public String getName() {
         return name;
@@ -29,6 +35,14 @@ public class ContactRequest {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
 

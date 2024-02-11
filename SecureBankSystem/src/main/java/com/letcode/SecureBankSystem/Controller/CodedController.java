@@ -1,55 +1,55 @@
 package com.letcode.SecureBankSystem.Controller;
 
-
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-@RestController("/api/v1")
+@RestController
+@RequestMapping("/api/v1/user")
 public class CodedController {
+
+    List<CreateContactRequest> allContact = new ArrayList<>();
     @GetMapping("/sayHi")
-    public String sayHi() {
-        return "welcome to coded";
+    public String sayHi(){
+        return "Welcome to Coded";
     }
+
     @GetMapping("/greet")
-    public String greet(@RequestParam String name) {
-
-        return "Hello " + name + "!";
-    }
-    @PostMapping ("/farewell")
-
-    public String farewell(@RequestBody FarewellRequest farewellRequest) {
-        String name = farewellRequest.getname();
-        return "GoodBye"+ " " + name + "!";
+    public String greet(@RequestParam String name){
+        return "Hello, "+ name;
     }
 
-    private List<Contact> contacts = new ArrayList<>();
+    @PostMapping("/farewell")
+    public String farewell(@RequestBody CreateFarewellRequest createFarewellRequest){
+        return "GoodBye, "+ createFarewellRequest.getName();
+    }
 
     @PostMapping("/addContact")
-    public String addContact(@RequestBody ContactRequest contactRequest) {
-        String name = contactRequest.getName();
-        String email = contactRequest.getEmail();
-        String phone = contactRequest.getPhone();
-
-        Contact newContact = new Contact(name, email, phone);
-        contacts.add(newContact);
-
-        return "Contact added successfully!";
+    public ResponseEntity<String> AddContact(@RequestBody  CreateContactRequest createContactRequest){
+        for(int i=0;i<allContact.size();i++){
+            System.out.println(allContact.get(i).getName());
+            if(allContact.get(i).getEmail().equals(createContactRequest.getEmail())){
+                return ResponseEntity.badRequest().body("Contact already exist with this email");
+            }
+        }
+        allContact.add(createContactRequest);
+        return ResponseEntity.ok("Contact added successfully!");
     }
 
     @GetMapping("/getContactDetails")
-    public Contact getContactDetails(@RequestParam String name) {
-        return findContactByName(name);
-    }
+    public ResponseEntity<?> getContactDetails(@RequestParam String name){
+        for(int i=0; i<allContact.size(); i++){
+            System.out.println(allContact.get(i).toString());
+            if (allContact.get(i).getName().equals(name)){
 
-    private Contact findContactByName(String name) {
-        for (Contact contact : contacts) {
-            if (contact.getName().equals(name)) {
-                return contact;
+                return ResponseEntity.ok(allContact.get(i));
             }
         }
-        return null;
+        return  ResponseEntity.badRequest().body("Contact not found");
     }
 }
+
+
